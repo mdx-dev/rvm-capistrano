@@ -11,8 +11,8 @@ rvm_with_capistrano do
       when "release_path"
         shell = "rvm_path=#{rvm_path} #{shell} --path '#{release_path}'"
       when "latest_release"
-        latest_release_path = exists?(:deploy_timestamped) ? release_path : current_path
-        shell = "rvm_path=#{rvm_path} #{shell} --path '#{latest_release_path}'"
+        path = %Q{path="#{current_path}" && [[ -d #{release_path} ]] && path="#{release_path}"}
+        shell = "#{path} ; rvm_path=#{rvm_path} #{shell} --path $path"
       when "local"
         ruby = (ENV['GEM_HOME'] || "").gsub(/.*\//, "")
         raise "Failed to get ruby version from GEM_HOME. Please make sure rvm is loaded!" if ruby.empty?
